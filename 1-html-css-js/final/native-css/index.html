@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HCM Stok - Inventory Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="body-page">
+
+  <!-- ================= HALAMAN LOGIN ================= -->
+  <div id="login-page" class="login-page">
+    <form id="login-form" class="login-box">
+      <h1 class="login-title">StokKu</h1>
+      <p class="login-subtitle">Masuk untuk mengelola stok dan penjualan.</p>
+
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input id="login-username" type="text" class="form-input" placeholder="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input id="login-password" type="password" class="form-input" placeholder="admin123">
+      </div>
+
+      <p id="login-error" class="login-error hide"></p>
+      <button type="submit" class="btn btn-primary btn-full">Masuk</button>
+      <p class="login-hint">Akun bawaan: admin / admin123</p>
+    </form>
+  </div>
+
+  <!-- ================= HALAMAN APLIKASI ================= -->
+  <div id="app-page" class="app-wrapper hide">
+
+    <header class="navbar">
+      <div class="navbar-inner">
+        <div class="brand">
+          <span class="brand-mark">S</span>
+          <span class="brand-name">StokKu</span>
+        </div>
+
+        <nav class="nav-menu">
+          <button class="menu-item menu-active" data-page="dashboard">Dashboard</button>
+          <button class="menu-item" data-page="kategori">Kategori Produk</button>
+          <button class="menu-item" data-page="produk">Produk</button>
+          <button class="menu-item" data-page="penjualan">Penjualan</button>
+        </nav>
+
+        <div class="nav-user">
+          <p id="user-name" class="nav-username"></p>
+          <button id="btn-logout" class="btn btn-light btn-small">Keluar</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <section id="page-dashboard" class="page">
+        <h1 class="page-title">Ringkasan toko</h1>
+        <div class="card-grid">
+          <div class="stat-card"><p class="stat-label">Kategori</p><p id="stat-kategori" class="stat-value">0</p></div>
+          <div class="stat-card"><p class="stat-label">Produk</p><p id="stat-produk" class="stat-value">0</p></div>
+          <div class="stat-card"><p class="stat-label">Total stok</p><p id="stat-stok" class="stat-value">0</p></div>
+          <div class="stat-card"><p class="stat-label">Total pendapatan</p><p id="stat-pendapatan" class="stat-value">Rp 0</p></div>
+        </div>
+      </section>
+
+      <!-- KATEGORI -->
+      <section id="page-kategori" class="page hide">
+        <div class="page-header">
+          <h1 class="page-title">Kategori Produk</h1>
+          <button id="btn-add-kategori" class="btn btn-primary">Tambah kategori</button>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead><tr><th class="th">No</th><th class="th">Nama kategori</th><th class="th th-action">Aksi</th></tr></thead>
+            <tbody id="tbody-kategori"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PRODUK -->
+      <section id="page-produk" class="page hide">
+        <div class="page-header">
+          <h1 class="page-title">Produk</h1>
+          <button id="btn-add-produk" class="btn btn-primary">Tambah produk</button>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead><tr><th class="th">No</th><th class="th">Gambar</th><th class="th">Nama</th><th class="th">Kategori</th><th class="th">Stok</th><th class="th">Harga</th><th class="th th-action">Aksi</th></tr></thead>
+            <tbody id="tbody-produk"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PENJUALAN -->
+      <section id="page-penjualan" class="page hide">
+        <div class="page-header">
+          <h1 class="page-title">Penjualan</h1>
+          <button id="btn-add-penjualan" class="btn btn-primary">Tambah penjualan</button>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead><tr><th class="th">No</th><th class="th">Tanggal</th><th class="th">Produk</th><th class="th">Qty</th><th class="th">Total</th><th class="th th-action">Aksi</th></tr></thead>
+            <tbody id="tbody-penjualan"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= MODAL KATEGORI ================= -->
+  <div id="modal-kategori" class="modal hide">
+    <form id="form-kategori" class="modal-box">
+      <h3 id="title-kategori" class="modal-title">Tambah kategori</h3>
+      <input type="hidden" id="kategori-id">
+      <div class="form-group">
+        <label class="form-label">Nama kategori</label>
+        <input id="kategori-nama" type="text" class="form-input">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-light btn-close">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ================= MODAL PRODUK ================= -->
+  <div id="modal-produk" class="modal hide">
+    <form id="form-produk" class="modal-box">
+      <h3 id="title-produk" class="modal-title">Tambah produk</h3>
+      <input type="hidden" id="produk-id">
+      <div class="form-group">
+        <label class="form-label">Nama produk</label>
+        <input id="produk-nama" type="text" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <select id="produk-kategori" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL gambar</label>
+        <input id="produk-gambar" type="text" class="form-input" placeholder="https://...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Stok</label>
+          <input id="produk-stok" type="number" min="0" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Harga (Rp)</label>
+          <input id="produk-harga" type="number" min="0" class="form-input">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-light btn-close">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ================= MODAL PENJUALAN ================= -->
+  <div id="modal-penjualan" class="modal hide">
+    <form id="form-penjualan" class="modal-box">
+      <h3 id="title-penjualan" class="modal-title">Tambah penjualan</h3>
+      <input type="hidden" id="penjualan-id">
+      <div class="form-group">
+        <label class="form-label">Produk</label>
+        <select id="penjualan-produk" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Qty</label>
+        <input id="penjualan-qty" type="number" min="1" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Total</label>
+        <input id="penjualan-total" type="text" class="form-input" readonly>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-light btn-close">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

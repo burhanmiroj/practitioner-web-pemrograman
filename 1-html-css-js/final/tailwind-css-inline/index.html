@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HCM Stok - Inventory Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    /**
+     * JANGAN UBAH KODE INI
+     **/
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: "#16162a",
+            paper: "#f1f2fb",
+            cobalt: "#2a46ff",
+            sun: "#ffd84d",
+            mint: "#7be0b0",
+            sky: "#a9bcff",
+            coral: "#ff8f7a",
+          },
+          boxShadow: {
+            hard: "4px 4px 0 0 #16162a",
+            "hard-sm": "2px 2px 0 0 #16162a",
+            "hard-lg": "8px 8px 0 0 #16162a",
+          },
+        },
+      },
+    };
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer components {
+      /**
+      * JANGAN UBAH KODE INI
+      **/
+      .hide { @apply !hidden; }
+      .body-page { @apply bg-paper text-ink font-['Figtree',sans-serif]; }
+      /* ---------- Login ---------- */
+      .login-page { @apply min-h-screen flex items-center justify-center p-4; }
+      .login-box { @apply w-full max-w-sm bg-white border-2 border-ink rounded-2xl shadow-hard-lg p-8; }
+      .login-title { @apply font-['Bricolage_Grotesque',sans-serif] text-3xl font-extrabold tracking-tight; }
+      .login-subtitle { @apply text-sm text-ink/70 mt-1 mb-6; }
+      .login-error { @apply text-sm font-medium bg-coral/40 border-2 border-ink rounded-lg px-3 py-2 mb-4; }
+      .login-hint { @apply text-xs text-ink/60 text-center mt-4; }
+      /* ---------- Form ---------- */
+      .form-group { @apply mb-4 flex-1; }
+      .form-row { @apply flex gap-3; }
+      .form-label { @apply block text-sm font-semibold mb-1; }
+      .form-input { @apply w-full bg-white border-2 border-ink rounded-lg px-3 py-2 text-sm focus:outline-none focus:bg-sun/20 focus:shadow-hard-sm; }
+      /* ---------- Tombol ---------- */
+      .btn { @apply px-4 py-2 rounded-lg border-2 border-ink text-sm font-semibold cursor-pointer shadow-hard-sm transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-hard active:translate-x-0.5 active:translate-y-0.5 active:shadow-none; }
+      .btn-full { @apply w-full; }
+      .btn-primary { @apply bg-cobalt text-white; }
+      .btn-light { @apply bg-white text-ink; }
+      .btn-small { @apply px-3 py-1 text-xs mr-1; }
+      .btn-edit { @apply bg-sun text-ink; }
+      .btn-delete { @apply bg-coral text-ink; }
+      /* ---------- Navbar atas ---------- */
+      .app-wrapper { @apply flex flex-col min-h-screen; }
+      .navbar { @apply bg-cobalt border-b-2 border-ink sticky top-0 z-40; }
+      .navbar-inner { @apply max-w-6xl mx-auto px-4 md:px-8 py-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-3; }
+      .brand { @apply flex items-center gap-2 order-1; }
+      .brand-mark { @apply w-9 h-9 grid place-items-center bg-sun text-ink border-2 border-ink rounded-lg -rotate-6 font-['Bricolage_Grotesque',sans-serif] font-extrabold text-lg; }
+      .brand-name { @apply font-['Bricolage_Grotesque',sans-serif] text-xl font-extrabold text-white tracking-tight; }
+      .nav-menu { @apply order-3 md:order-2 w-full md:w-auto flex gap-1 overflow-x-auto md:flex-1; }
+      .menu-item { @apply whitespace-nowrap px-4 py-1.5 rounded-full border-2 border-transparent text-sm font-semibold text-white cursor-pointer hover:bg-white/15; }
+      .menu-active { @apply bg-sun text-ink border-ink hover:bg-sun; }
+      .nav-user { @apply order-2 md:order-3 flex items-center gap-3; }
+      .nav-username { @apply hidden sm:block text-sm font-medium text-white; }
+      /* ---------- Halaman ---------- */
+      .main { @apply w-full max-w-6xl mx-auto flex-1 p-4 md:p-8; }
+      .page-header { @apply flex flex-wrap items-center justify-between gap-3 mb-5; }
+      .page-title { @apply font-['Bricolage_Grotesque',sans-serif] text-3xl font-extrabold tracking-tight mb-5; }
+      .page-header .page-title { @apply mb-0; }
+      .card-grid { @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5; }
+      .stat-card { @apply bg-white border-2 border-ink rounded-xl shadow-hard p-5; }
+      .stat-card:nth-child(1) { @apply bg-sun; }
+      .stat-card:nth-child(2) { @apply bg-sky; }
+      .stat-card:nth-child(3) { @apply bg-mint; }
+      .stat-card:nth-child(4) { @apply bg-coral; }
+      .stat-label { @apply text-sm font-semibold; }
+      .stat-value { @apply font-['Bricolage_Grotesque',sans-serif] text-4xl font-extrabold mt-2 break-words; }
+      /* ---------- Tabel ---------- */
+      .table-box { @apply bg-white border-2 border-ink rounded-xl shadow-hard overflow-x-auto; }
+      .table { @apply w-full text-sm text-left; }
+      .th { @apply px-4 py-3 bg-ink text-white font-semibold whitespace-nowrap; }
+      .th-action { @apply w-40; }
+      .td { @apply px-4 py-3 border-b border-ink/10 whitespace-nowrap; }
+      .td-empty { @apply px-4 py-10 text-center text-ink/50; }
+      .product-img { @apply w-12 h-12 object-cover rounded-lg border-2 border-ink bg-sky; }
+      /* ---------- Modal ---------- */
+      .modal { @apply fixed inset-0 bg-ink/60 flex items-center justify-center p-4 z-50; }
+      .modal-box { @apply bg-white border-2 border-ink rounded-2xl shadow-hard-lg w-full max-w-md p-6 max-h-full overflow-y-auto; }
+      .modal-title { @apply font-['Bricolage_Grotesque',sans-serif] text-xl font-extrabold mb-4; }
+      .modal-actions { @apply flex justify-end gap-3 mt-2; }
+    }
+  </style>
+</head>
+<body class="body-page">
+
+  <!-- ================= HALAMAN LOGIN ================= -->
+  <div id="login-page" class="login-page">
+    <form id="login-form" class="login-box">
+      <h1 class="login-title">StokKu</h1>
+      <p class="login-subtitle">Masuk untuk mengelola stok dan penjualan.</p>
+
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input id="login-username" type="text" class="form-input" placeholder="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input id="login-password" type="password" class="form-input" placeholder="admin123">
+      </div>
+
+      <p id="login-error" class="login-error hide"></p>
+      <button type="submit" class="btn btn-primary btn-full">Masuk</button>
+      <p class="login-hint">Akun bawaan: admin / admin123</p>
+    </form>
+  </div>
+
+  <!-- ================= HALAMAN APLIKASI ================= -->
+  <div id="app-page" class="app-wrapper hide">
+
+    <header class="navbar">
+      <div class="navbar-inner">
+        <div class="brand">
+          <span class="brand-mark">S</span>
+          <span class="brand-name">StokKu</span>
+        </div>
+
+        <nav class="nav-menu">
+          <button class="menu-item menu-active" data-page="dashboard">Dashboard</button>
+          <button class="menu-item" data-page="kategori">Kategori Produk</button>
+          <button class="menu-item" data-page="produk">Produk</button>
+          <button class="menu-item" data-page="penjualan">Penjualan</button>
+        </nav>
+
+        <div class="nav-user">
+          <p id="user-name" class="nav-username"></p>
+          <button id="btn-logout" class="btn btn-light btn-small">Keluar</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <section id="page-dashboard" class="page">
+        <h1 class="page-title">Ringkasan toko</h1>
+        <div class="card-grid">
+          <div class="stat-card"><p class="stat-label">Kategori</p><p id="stat-kategori" class="stat-value">0</p></div>
+          <div class="stat-card"><p class="stat-label">Produk</p><p id="stat-produk" class="stat-value">0</p></div>
+          <div class="stat-card"><p class="stat-label">Total stok</p><p id="stat-stok" class="stat-value">0</p></div>
+          <div class="stat-card"><p class="stat-label">Total pendapatan</p><p id="stat-pendapatan" class="stat-value">Rp 0</p></div>
+        </div>
+      </section>
+
+      <!-- KATEGORI -->
+      <section id="page-kategori" class="page hide">
+        <div class="page-header">
+          <h1 class="page-title">Kategori Produk</h1>
+          <button id="btn-add-kategori" class="btn btn-primary">Tambah kategori</button>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead><tr><th class="th">No</th><th class="th">Nama kategori</th><th class="th th-action">Aksi</th></tr></thead>
+            <tbody id="tbody-kategori"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PRODUK -->
+      <section id="page-produk" class="page hide">
+        <div class="page-header">
+          <h1 class="page-title">Produk</h1>
+          <button id="btn-add-produk" class="btn btn-primary">Tambah produk</button>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead><tr><th class="th">No</th><th class="th">Gambar</th><th class="th">Nama</th><th class="th">Kategori</th><th class="th">Stok</th><th class="th">Harga</th><th class="th th-action">Aksi</th></tr></thead>
+            <tbody id="tbody-produk"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PENJUALAN -->
+      <section id="page-penjualan" class="page hide">
+        <div class="page-header">
+          <h1 class="page-title">Penjualan</h1>
+          <button id="btn-add-penjualan" class="btn btn-primary">Tambah penjualan</button>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead><tr><th class="th">No</th><th class="th">Tanggal</th><th class="th">Produk</th><th class="th">Qty</th><th class="th">Total</th><th class="th th-action">Aksi</th></tr></thead>
+            <tbody id="tbody-penjualan"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= MODAL KATEGORI ================= -->
+  <div id="modal-kategori" class="modal hide">
+    <form id="form-kategori" class="modal-box">
+      <h3 id="title-kategori" class="modal-title">Tambah kategori</h3>
+      <input type="hidden" id="kategori-id">
+      <div class="form-group">
+        <label class="form-label">Nama kategori</label>
+        <input id="kategori-nama" type="text" class="form-input">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-light btn-close">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ================= MODAL PRODUK ================= -->
+  <div id="modal-produk" class="modal hide">
+    <form id="form-produk" class="modal-box">
+      <h3 id="title-produk" class="modal-title">Tambah produk</h3>
+      <input type="hidden" id="produk-id">
+      <div class="form-group">
+        <label class="form-label">Nama produk</label>
+        <input id="produk-nama" type="text" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <select id="produk-kategori" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL gambar</label>
+        <input id="produk-gambar" type="text" class="form-input" placeholder="https://...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Stok</label>
+          <input id="produk-stok" type="number" min="0" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Harga (Rp)</label>
+          <input id="produk-harga" type="number" min="0" class="form-input">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-light btn-close">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ================= MODAL PENJUALAN ================= -->
+  <div id="modal-penjualan" class="modal hide">
+    <form id="form-penjualan" class="modal-box">
+      <h3 id="title-penjualan" class="modal-title">Tambah penjualan</h3>
+      <input type="hidden" id="penjualan-id">
+      <div class="form-group">
+        <label class="form-label">Produk</label>
+        <select id="penjualan-produk" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Qty</label>
+        <input id="penjualan-qty" type="number" min="1" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Total</label>
+        <input id="penjualan-total" type="text" class="form-input" readonly>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-light btn-close">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
